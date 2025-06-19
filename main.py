@@ -41,10 +41,11 @@ async def media_stream(websocket: WebSocket):
             print("📤 Sending audio payload:", len(response_audio))
 
             base64_audio = base64.b64encode(response_audio).decode("utf-8")
-            await websocket.send_json({
-                "event": "media",
-                "media": {"payload": base64_audio}
-            })
+           import json
+await websocket.send_text(json.dumps({
+    "event": "media",
+    "media": {"payload": base64_audio}
+}))
 
     except Exception as e:
         print("❌ WebSocket closed or failed:", str(e))
