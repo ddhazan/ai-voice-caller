@@ -1,13 +1,15 @@
 from twilio.rest import Client
-from config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, LIVE_TRANSFER_NUMBER
+from config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def initiate_call(to_number):
     twiml = f"""
     <Response>
-        <Say voice='Polly.Joanna'>Hi, this is Dan from Thermal Capital. One moment...</Say>
-        <Dial>{LIVE_TRANSFER_NUMBER}</Dial>
+        <Start>
+            <Stream url="wss://ai-voice-caller-gc38.onrender.com/media" />
+        </Start>
+        <Say voice='Polly.Joanna'>Hi, this is Dan from Thermal Capital. I just have a couple quick questions...</Say>
     </Response>
     """
     call = client.calls.create(
