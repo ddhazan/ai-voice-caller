@@ -2,9 +2,9 @@ import asyncio
 import websockets
 from media_stream import stream_handler
 
+# Reject Render's HTTP health checks
 async def reject_http(path, request_headers):
-    # Render sends HTTP HEAD/GET health checks — reject them
-    if "Upgrade" not in request_headers:
+    if "Upgrade" not in request_headers":
         return (
             400,
             [("Content-Type", "text/plain")],
@@ -17,9 +17,9 @@ async def main():
         stream_handler,
         host="0.0.0.0",
         port=10000,
-        process_request=reject_http  # 🔐 This blocks non-WS requests
+        process_request=reject_http  # 🔥 this is the key line
     ):
-        await asyncio.Future()  # Keep running forever
+        await asyncio.Future()  # Keep running
 
 if __name__ == "__main__":
     asyncio.run(main())
