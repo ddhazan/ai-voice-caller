@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import json
 import base64
-from deepgram_client import Deepgram
+from deepgram import Deepgram
 from config import DEEPGRAM_API_KEY
 from ai_convo_loop import get_ai_response_and_audio
 
