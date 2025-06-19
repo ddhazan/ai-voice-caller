@@ -3,3 +3,5 @@ openai
 twilio
 requests
 gunicorn
+deepgram-sdk
+websockets
