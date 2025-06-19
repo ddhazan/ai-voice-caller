@@ -1,4 +1,4 @@
-from deepgram_client import Deepgram
+from deepgram import Deepgram
 from config import DEEPGRAM_API_KEY
 
 dg_client = Deepgram(DEEPGRAM_API_KEY)
