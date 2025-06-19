@@ -2,9 +2,10 @@ import openai
 from config import OPENAI_API_KEY
 
 openai.api_key = OPENAI_API_KEY
-openai.organization = "org-vGU6JoNgNsNnPbmv0mhXUINT"  # ✅ Added your org ID
+openai.organization = "org-vGU6JoNgNsNnPbmv0mhXUINT"
 
 def get_ai_response(prompt):
+    print("🔁 GPT prompt received:", prompt)
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4o",
@@ -14,7 +15,9 @@ def get_ai_response(prompt):
             ],
             timeout=10
         )
-        return response['choices'][0]['message']['content']
+        answer = response['choices'][0]['message']['content']
+        print("✅ GPT response:", answer)
+        return answer
     except Exception as e:
-        print("❌ GPT Error:", e)
-        return "Sorry, I had trouble understanding that. Can you repeat?"
+        print("❌ GPT error:", e)
+        return "Sorry, something went wrong."
