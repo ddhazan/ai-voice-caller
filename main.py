@@ -21,20 +21,26 @@ async def media_stream(websocket: WebSocket):
     await websocket.accept()
     print("🎙 WebSocket connection accepted")
 
+    # Immediately send intro audio to keep call alive and simulate greeting
+    greeting_audio = get_ai_response_and_audio("Hi, this is Dan from Thermal Capital. I just have a few quick questions.")
+    base64_audio = base64.b64encode(greeting_audio).decode("utf-8")
+    await websocket.send_json({
+        "event": "media",
+        "media": {"payload": base64_audio}
+    })
+
     try:
         while True:
             message = await websocket.receive_bytes()
             print("📥 Received audio bytes:", len(message))
 
-            # TEMP: You can replace this with actual speech-to-text if needed
-            prompt = "Hi, I’m calling about business funding. Do you currently take card payments?"
+            # Replace with Deepgram transcript in future
+            prompt = "I'm checking to see if your business accepts card payments and might benefit from funding."
 
-            # Get GPT response + ElevenLabs audio
-            audio_bytes = get_ai_response_and_audio(prompt)
-            print("📤 Sending audio payload:", len(audio_bytes), "bytes")
+            response_audio = get_ai_response_and_audio(prompt)
+            print("📤 Sending audio payload:", len(response_audio))
 
-            # Send to Twilio as base64
-            base64_audio = base64.b64encode(audio_bytes).decode("utf-8")
+            base64_audio = base64.b64encode(response_audio).decode("utf-8")
             await websocket.send_json({
                 "event": "media",
                 "media": {"payload": base64_audio}

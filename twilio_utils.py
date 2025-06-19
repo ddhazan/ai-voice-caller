@@ -9,7 +9,6 @@ def initiate_call(to_number):
         <Start>
             <Stream url="wss://ai-voice-caller.onrender.com/media" />
         </Start>
-        <Say voice='Polly.Joanna'>Hi, this is Dan from Thermal Capital. Just a few quick questions...</Say>
     </Response>
     """
     call = client.calls.create(
