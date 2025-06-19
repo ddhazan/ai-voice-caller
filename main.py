@@ -16,9 +16,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def root():
     return {"status": "ok"}
+
 # ✅ Twilio may send a HEAD or GET to check if /media exists
 @app.get("/media")
 def media_health_check():
