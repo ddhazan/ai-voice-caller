@@ -5,12 +5,13 @@ client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def initiate_call(to_number):
     twiml = f"""
-    <Response>
-        <Start>
-            <Stream url="wss://ai-voice-caller-gc38.onrender.com/media" />
-        </Start>
-        <Say voice='Polly.Joanna'>Hi, this is Dan from Thermal Capital. I just have a couple quick questions...</Say>
-    </Response>
+<Response>
+  <Start>
+    <Stream url="wss://ai-voice-media-worker.onrender.com/media" />
+  </Start>
+  <Say voice="Polly.Joanna">Hi, this is Dan from Thermal Capital. Just a few quick questions...</Say>
+</Response>
+
     """
     call = client.calls.create(
         twiml=twiml,
