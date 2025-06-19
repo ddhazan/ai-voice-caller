@@ -1,9 +1,14 @@
-@app.get("/media")
-def media_health_check():
-    return {"status": "OK"}
-
+from fastapi import FastAPI, WebSocket, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from twilio_utils import initiate_call
+from ai_logic import get_ai_response_and_audio
+import base64
+import json
 
+app = FastAPI()
+
+# ✅ Allow Twilio preflight and headers
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -11,14 +16,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-from fastapi import FastAPI, WebSocket, Request
-from fastapi.responses import JSONResponse
-from twilio_utils import initiate_call
-from ai_logic import get_ai_response_and_audio
-import base64
-import json
 
-app = FastAPI()
+# ✅ Twilio may send a HEAD or GET to check if /media exists
+@app.get("/media")
+def media_health_check():
+    return {"status": "OK"}
 
 @app.post("/call")
 async def call_endpoint(request: Request):
@@ -35,23 +37,23 @@ async def media_stream(websocket: WebSocket):
     await websocket.accept()
     print("🎙 WebSocket connection accepted")
 
-    # Immediately send an ElevenLabs voice greeting
-    greeting_text = "Hi, this is Dan from Thermal Capital. I just have a few quick questions."
-    greeting_audio = get_ai_response_and_audio(greeting_text)
-    base64_audio = base64.b64encode(greeting_audio).decode("utf-8")
-
-    await websocket.send_text(json.dumps({
-        "event": "media",
-        "media": {"payload": base64_audio}
-    }))
-    print("✅ Sent greeting audio")
-
     try:
+        # Send initial ElevenLabs voice greeting
+        greeting_text = "Hi, this is Dan from Thermal Capital. I just have a few quick questions."
+        greeting_audio = get_ai_response_and_audio(greeting_text)
+        base64_audio = base64.b64encode(greeting_audio).decode("utf-8")
+
+        await websocket.send_text(json.dumps({
+            "event": "media",
+            "media": {"payload": base64_audio}
+        }))
+        print("✅ Sent greeting audio")
+
         while True:
             message = await websocket.receive_bytes()
             print("📥 Received audio chunk:", len(message))
 
-            # Placeholder: replace with real transcription later
+            # Placeholder for real speech-to-text
             prompt = "Do you currently accept credit card payments from customers?"
 
             response_audio = get_ai_response_and_audio(prompt)
