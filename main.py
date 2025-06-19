@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from twilio_utils import initiate_call
 from ai_logic import get_ai_response_and_audio
 import base64
+import json
 
 app = FastAPI()
 
@@ -21,31 +22,33 @@ async def media_stream(websocket: WebSocket):
     await websocket.accept()
     print("🎙 WebSocket connection accepted")
 
-    # Immediately send intro audio to keep call alive and simulate greeting
-    greeting_audio = get_ai_response_and_audio("Hi, this is Dan from Thermal Capital. I just have a few quick questions.")
+    # Immediately send an ElevenLabs voice greeting
+    greeting_text = "Hi, this is Dan from Thermal Capital. I just have a few quick questions."
+    greeting_audio = get_ai_response_and_audio(greeting_text)
     base64_audio = base64.b64encode(greeting_audio).decode("utf-8")
-    await websocket.send_json({
+
+    await websocket.send_text(json.dumps({
         "event": "media",
         "media": {"payload": base64_audio}
-    })
+    }))
+    print("✅ Sent greeting audio")
 
     try:
         while True:
             message = await websocket.receive_bytes()
-            print("📥 Received audio bytes:", len(message))
+            print("📥 Received audio chunk:", len(message))
 
-            # Replace with Deepgram transcript in future
-            prompt = "I'm checking to see if your business accepts card payments and might benefit from funding."
+            # Placeholder: replace with real transcription later
+            prompt = "Do you currently accept credit card payments from customers?"
 
             response_audio = get_ai_response_and_audio(prompt)
-            print("📤 Sending audio payload:", len(response_audio))
-
             base64_audio = base64.b64encode(response_audio).decode("utf-8")
-           import json
-await websocket.send_text(json.dumps({
-    "event": "media",
-    "media": {"payload": base64_audio}
-}))
+
+            await websocket.send_text(json.dumps({
+                "event": "media",
+                "media": {"payload": base64_audio}
+            }))
+            print("📤 Sent AI response audio")
 
     except Exception as e:
-        print("❌ WebSocket closed or failed:", str(e))
+        print("❌ WebSocket error:", str(e))
