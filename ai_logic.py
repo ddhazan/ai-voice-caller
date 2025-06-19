@@ -1,7 +1,7 @@
 import requests
 import io
 import base64
-from elevenlabs import generate
+from elevenlabs_client import generate
 from pydub import AudioSegment
 
 from config import ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID
